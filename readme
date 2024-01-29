@@ -1,0 +1,4 @@
+#Libraries
+
+npm i tsx -D ;
+npm i tsup -D ;
