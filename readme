@@ -2,3 +2,4 @@
 
 npm i tsx -D ;
 npm i tsup -D ;
+npm i vitest -D ;
