@@ -1,15 +1,17 @@
 import express from "express";
 import { createServer } from "http";
-import { testFirebase } from "../fireBaseTest";
+import { testFirebase } from "./fireBaseTest";
 import users from "./mock/users";
+import ip from "ip";
 
 const app = express();
-const port = 5000;
+const port = 3000;
 
 app.use(express.json());
 
 app.listen(port, () => {
-  console.log(`Server listening on address: http://localhost:${port}`);
+  const ipAddresses = ip.address(); // Call the function to get IP addresses
+  console.log(`Server listening on addresses: ${ipAddresses}:${port}`);
 });
 
 app.get("/", (req, res) => {
@@ -20,12 +22,10 @@ app.get("/api/users", (req, res) => {
   res.json(users);
 });
 
-app.post("/api/post", (req, res) => {
-  console.log("HELLO POST");
-  /* console.log("Request Headers:", req.headers);
-  console.log("Received data:", req.body); */
-
-  res.json({ message: "Data received successfully" });
+app.post("/api/users", (req, res) => {
+  console.log("POST CALLED");
+  users.push(req.body);
+  res.status(201).send("User registered succesfully!");
 });
 
 testFirebase();
