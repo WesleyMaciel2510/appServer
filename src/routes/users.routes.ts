@@ -1,52 +1,94 @@
 import express from "express";
-import users from "../mock/users";
+import {
+  getUsers,
+  createUser,
+  getUserByIndex,
+  updateUser,
+  deleteUser,
+} from "../database/index";
 
 const userRouter = express.Router();
-
-// FUNCTIONS
-function searchUserWithID(ID: number) {
-  return users.find((user) => user.ID === ID);
-}
-function searchIndexUser(ID: number) {
-  const IDRECEBIDO = ID;
-  const IDFILTRADO = users.findIndex((user) => user.ID === ID);
-  return IDFILTRADO;
-}
-// ==========================================================
-userRouter.get("/", (req, res) => {
-  res.json(users);
-});
-
-userRouter.get("/:ID", (req, res) => {
-  const foundUser = searchUserWithID(parseInt(req.params.ID));
-  res.json(foundUser);
-});
-// ==========================================================
-userRouter.post("/", (req, res) => {
+// POST-CREATE ============================================
+userRouter.post("/", async (req, res) => {
   console.log("POST CALLED");
-  users.push(req.body);
-  res.status(201).send("User registered successfully!");
+  try {
+    const userData = req.body;
+
+    await createUser(userData);
+
+    res.status(200).send("User added successfully");
+  } catch (error: any) {
+    console.error("Error adding user:", error.message);
+    res.status(500).send("Error adding user");
+  }
 });
-// ==========================================================
-userRouter.delete("/:ID", (req, res) => {
+
+// GET-READ ===============================================
+userRouter.get("/", async (req, res) => {
+  console.log("GET CALLED");
+  try {
+    const users = await getUsers();
+    res.json(users);
+  } catch (error: any) {
+    console.error("Error getting users:", error.message);
+    res.status(500).send("Error getting users");
+  }
+});
+
+userRouter.get("/:INDEX", async (req, res) => {
+  const userIndex = req.params.INDEX;
+  if (parseInt(userIndex) >= 0) {
+    const foundUser = await getUserByIndex(userIndex);
+
+    if (foundUser) {
+      res.status(200).json(foundUser);
+    } else {
+      res.status(404).send(`User with Index ${userIndex} not found.`);
+    }
+  } else {
+    res.status(400).send(`User ID ${userIndex} is not valid.`);
+  }
+});
+
+// PUT-UPDATE =============================================
+userRouter.put("/:Index", async (req, res) => {
+  console.log("PUT CALLED");
+  const userIndex = req.params.Index;
+  if (parseInt(req.params.Index) > 0) {
+    try {
+      const result = await updateUser(userIndex, req.body);
+      if (result) {
+        res.send(`User updated successfully!`);
+      } else {
+        res.status(404).send(`User with Index ${req.params.Index} not found.`);
+      }
+    } catch (error: any) {
+      console.error("Error updating user:", error.message);
+      res.status(500).send("Error updating user");
+    }
+  } else {
+    res.status(404).send(`User with Index ${req.params.Index} is not valid.`);
+  }
+});
+// DELETE =================================================
+userRouter.delete("/:Index", async (req, res) => {
   console.log("DELETE CALLED");
-  let index = searchIndexUser(parseInt(req.params.ID));
-  users.splice(index, 1);
-  res.send(`User deleted successfully!`);
-});
-// ==========================================================
-userRouter.put("/:ID", (req, res) => {
-  console.log("UPDATE CALLED");
-  let index = searchIndexUser(parseInt(req.params.ID));
-  //validating to not update if anything is undefined
-  req.body.Name !== undefined ? (users[index].Name = req.body.Name) : null;
-  req.body.AccessLevel !== undefined
-    ? (users[index].AccessLevel = req.body.AccessLevel)
-    : null;
-  req.body.IsActive !== undefined
-    ? (users[index].IsActive = req.body.IsActive)
-    : null;
-  res.send(`User updated successfully!`);
+  const userIndex = req.params.Index;
+  if (parseInt(req.params.Index) > 0) {
+    try {
+      const result = await deleteUser(userIndex);
+      if (result) {
+        res.send(`User deleted successfully!`);
+      } else {
+        res.status(404).send(`User with Index ${req.params.Index} not found.`);
+      }
+    } catch (error: any) {
+      console.error("Error deleting user:", error.message);
+      res.status(500).send("Error updating user");
+    }
+  } else {
+    res.status(404).send(`User with Index ${req.params.Index} is not valid.`);
+  }
 });
 
 export default userRouter;
