@@ -1,10 +1,12 @@
 import * as admin from "firebase-admin";
 
-const serviceAccount = require("../keys/appserver-2510-firebase-adminsdk-ql8my-2886040fa5.json");
+import ServiceAccount from "../../keys/appserver-2510-firebase-adminsdk-ql8my-2886040fa5.json";
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://appserver-2510-default-rtdb.firebaseio.com",
+  credential: admin.credential.cert(ServiceAccount as admin.ServiceAccount),
+  databaseURL: "https://appserver-2510-default-rtdb.firebaseio.com/",
+  projectId: "appserver-2510",
+  storageBucket: "gs://appserver-2510.appspot.com",
 });
 
 const database = admin.database();
@@ -16,6 +18,9 @@ export const testFirebase = async () => {
     const firestore = admin.firestore();
     const productsCollection = firestore.collection("products");
     const querySnapshot = await productsCollection.get();
+    //console.log("firestore = ", firestore);
+    //console.log("productsCollection = ", productsCollection);
+    //console.log("querySnapshot = ", querySnapshot);
 
     querySnapshot.forEach((doc) => {
       console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
