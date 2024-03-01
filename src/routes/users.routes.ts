@@ -23,6 +23,17 @@ userRouter.post("/", async (req, res) => {
   }
 });
 
+userRouter.post("/login", async (req, res) => {
+  try {
+    console.log("CHEGOU NA ROTA LOGIN");
+    console.log("req.body = ", req.body);
+    //const users = await logUserIn(req.body);
+    //users ? res.status(200).send(true) : res.status(404).send(false);
+  } catch (error) {
+    console.error("Login Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 // GET-READ ===============================================
 userRouter.get("/", async (req, res) => {
   console.log("GET CALLED");
