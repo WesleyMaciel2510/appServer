@@ -1,4 +1,3 @@
-// Import admin from Firebase
 import * as admin from "firebase-admin";
 
 export const getUsers = async () => {

@@ -5,6 +5,7 @@ import {
   getUserByIndex,
   updateUser,
   deleteUser,
+  logUserIn,
 } from "../database/index";
 
 const userRouter = express.Router();
@@ -27,8 +28,19 @@ userRouter.post("/login", async (req, res) => {
   try {
     console.log("CHEGOU NA ROTA LOGIN");
     console.log("req.body = ", req.body);
-    //const users = await logUserIn(req.body);
-    //users ? res.status(200).send(true) : res.status(404).send(false);
+    const { Username: username, Password: password } = req.body;
+    const result = await logUserIn(username, password);
+
+    console.log("passwordIsCorrect = ", result?.passwordIsCorrect);
+    if (result === null) {
+      console.log("result === null");
+      res.status(404).send("User not found");
+    } else if (!result.passwordIsCorrect) {
+      console.log("!result.passwordIsCorrect");
+      res.status(401).send("Incorrect password");
+    } else {
+      res.status(200).send(true);
+    }
   } catch (error) {
     console.error("Login Error:", error);
     res.status(500).send("Internal Server Error");
