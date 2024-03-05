@@ -28,8 +28,8 @@ userRouter.post("/login", async (req, res) => {
   try {
     console.log("CHEGOU NA ROTA LOGIN");
     console.log("req.body = ", req.body);
-    const { Username: username, Password: password } = req.body;
-    const result = await logUserIn(username, password);
+    const { Email: email, Password: password } = req.body;
+    const result = await logUserIn(email, password);
 
     console.log("passwordIsCorrect = ", result?.passwordIsCorrect);
     if (result === null) {
@@ -39,7 +39,8 @@ userRouter.post("/login", async (req, res) => {
       console.log("!result.passwordIsCorrect");
       res.status(401).send("Incorrect password");
     } else {
-      res.status(200).send(true);
+      console.log("result returned = ", result.user);
+      res.status(200).send(result.user);
     }
   } catch (error) {
     console.error("Login Error:", error);
@@ -77,7 +78,7 @@ userRouter.get("/:INDEX", async (req, res) => {
 userRouter.put("/:Index", async (req, res) => {
   console.log("PUT CALLED");
   const userIndex = req.params.Index;
-  if (parseInt(req.params.Index) > 0) {
+  if (parseInt(req.params.Index) >= 0) {
     try {
       const result = await updateUser(userIndex, req.body);
       if (result) {
@@ -97,7 +98,7 @@ userRouter.put("/:Index", async (req, res) => {
 userRouter.delete("/:Index", async (req, res) => {
   console.log("DELETE CALLED");
   const userIndex = req.params.Index;
-  if (parseInt(req.params.Index) > 0) {
+  if (parseInt(req.params.Index) >= 0) {
     try {
       const result = await deleteUser(userIndex);
       if (result) {

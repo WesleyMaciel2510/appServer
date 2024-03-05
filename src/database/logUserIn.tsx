@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 
-export const logUserIn = async (username: string, password: string) => {
+export const logUserIn = async (email: string, password: string) => {
   try {
     const ref = admin.database().ref("AgroSync/Users");
 
@@ -11,7 +11,7 @@ export const logUserIn = async (username: string, password: string) => {
 
     for (let userId in users) {
       let user = users[userId];
-      if (user.Username === username) {
+      if (user.Email === email) {
         const passwordIsCorrect = user.Password === password ? true : false;
         return { user, passwordIsCorrect };
       }
