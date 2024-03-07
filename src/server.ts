@@ -1,5 +1,5 @@
 import express from "express";
-import userRouter from "./routes/users.routes";
+import { userRouter, loadRouter } from "./routes/index";
 import ip from "ip";
 import * as admin from "firebase-admin";
 import { testFirebase } from "./services/fireBaseTest";
@@ -9,6 +9,7 @@ const port = 3000;
 
 app.use(express.json());
 app.use("/api/users", userRouter);
+app.use("/api/loads", loadRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello from the server!");
