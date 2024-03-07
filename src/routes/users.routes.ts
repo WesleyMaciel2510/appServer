@@ -6,7 +6,7 @@ import {
   updateUser,
   deleteUser,
   logUserIn,
-} from "../database/index";
+} from "../database/user/index";
 
 const userRouter = express.Router();
 // POST-CREATE ============================================
@@ -47,6 +47,7 @@ userRouter.post("/login", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 // GET-READ ===============================================
 userRouter.get("/", async (req, res) => {
   console.log("GET CALLED");
