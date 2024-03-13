@@ -1,28 +1,20 @@
 import express from "express";
 import { searchLoad } from "../database/loads/index";
 
-/* interface Load {
-  ID: number;
-  NomeProduto: string;
-  Peso: string;
-  NomeMotorista: string;
-  PlacaCaminhão: string;
-  Origem: string;
-  NomeOrigem: string;
-  Destino: string;
-  NomeDestino: string;
-  PrazoEntrega: string;
-} */
-
 const loadRouter = express.Router();
 // GET-SEARCH LOAD ============================================
-loadRouter.get("/", async (req, res) => {
-  console.log("GET loadRouter CALLED");
-  const loadNumber = req.body.ID;
 
-  if (loadNumber.toString().length > 3) {
+loadRouter.get("/:LOADNUMBER", async (req, res) => {
+  console.log("GET loadRouter CALLED");
+  const loadNumberString = req.params.LOADNUMBER;
+
+  const loadNumber = parseInt(loadNumberString, 10);
+  console.log("loadNumber = ", loadNumber);
+
+  if (loadNumber) {
     console.log("entrou no IF vai chamar");
     try {
+      console.log("loadNumber = ", loadNumber);
       const foundLoad = await searchLoad(loadNumber);
       console.log("foundLoad = ", foundLoad);
 
@@ -35,6 +27,8 @@ loadRouter.get("/", async (req, res) => {
       console.error("Error searching load:", error.message);
       res.status(500).send("Error searching load");
     }
+  } else {
+    res.status(400).send("Invalid load number");
   }
 });
 
