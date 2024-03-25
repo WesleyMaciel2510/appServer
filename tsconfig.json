@@ -2,11 +2,14 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
+    "jsx": "preserve",
+    "types": ["node", "express"],
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   }
 }
