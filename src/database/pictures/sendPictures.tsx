@@ -4,6 +4,7 @@ interface PictureData {
   ID: number;
   IDTYPE: "LOADID" | "SCHEDULINGID";
   BASE64: string;
+  DATETIME: string;
 }
 
 export const sendPictures = async (pictureData: PictureData) => {
