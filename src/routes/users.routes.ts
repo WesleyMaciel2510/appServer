@@ -8,6 +8,8 @@ import {
   logUserIn,
 } from "../database/user/index";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import secretKey from "../.env/token";
 
 const userRouter = express.Router();
 // POST-CREATE============================================
@@ -55,8 +57,9 @@ userRouter.post("/login", async (req, res) => {
       console.log("!result.passwordIsCorrect");
       res.status(401).send("Incorrect password");
     } else {
-      console.log("result returned = ", result.user);
-      res.status(200).send(result.user);
+      console.log("@ USER = ", result.user);
+      const token = jwt.sign({ userId: result.user.id }, secretKey);
+      res.status(200).send({ user: result.user, token });
     }
   } catch (error) {
     console.error("Login Error:", error);
