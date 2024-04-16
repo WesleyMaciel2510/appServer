@@ -7,17 +7,32 @@ import {
   deleteUser,
   logUserIn,
 } from "../database/user/index";
+import bcrypt from "bcrypt";
 
 const userRouter = express.Router();
-// POST-CREATE ============================================
+// POST-CREATE============================================
+const saltRounds = 20;
 userRouter.post("/", async (req, res) => {
   console.log("POST CALLED");
   try {
     const userData = req.body;
-
-    await createUser(userData);
-
-    res.status(200).send("User added successfully");
+    console.log("Password = ", userData.Password);
+    bcrypt.hash(userData.Password, saltRounds, async function (err, hash) {
+      if (err) {
+        console.error("Error hashing password:", err);
+        return res.status(500).json({ error: "Error hashing password" });
+      }
+      //console.log("Password = ", hash);
+      const encryptedData = {
+        Email: userData.Email,
+        FullName: userData.FullName,
+        Password: hash,
+        PhoneNumber: userData.PhoneNumber,
+        UserType: userData.UserType,
+      };
+      await createUser(encryptedData);
+      res.status(200).send("User added successfully");
+    });
   } catch (error: any) {
     console.error("Error adding user:", error.message);
     res.status(500).send("Error adding user");
@@ -29,6 +44,7 @@ userRouter.post("/login", async (req, res) => {
     console.log("CHEGOU NA ROTA LOGIN");
     console.log("req.body = ", req.body);
     const { Email: email, Password: password } = req.body;
+    //pass password from app,
     const result = await logUserIn(email, password);
 
     console.log("passwordIsCorrect = ", result?.passwordIsCorrect);
