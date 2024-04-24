@@ -116,7 +116,7 @@ userRouter.put("/:Index", async (req, res) => {
   }
 });
 // DELETE =================================================
-userRouter.delete("/:Index", async (req, res) => {
+userRouter.delete("/delete/:Index", async (req, res) => {
   console.log("DELETE CALLED");
   const userIndex = req.params.Index;
   if (parseInt(req.params.Index) >= 0) {
