@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { sendPictures } from "../database/pictures";
+import { sendPictures } from "../../database/pictures";
 
 const picturesRouter = express.Router();
 picturesRouter.use(bodyParser.urlencoded({ limit: "100mb" }));

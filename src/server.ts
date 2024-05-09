@@ -7,7 +7,8 @@ import {
   loadRouter,
   schedulingRouter,
   picturesRouter,
-} from "./routes/index";
+} from "./routes/mobile/index";
+import { webUserRouter } from "./routes/web/index";
 import bodyParser from "body-parser";
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
 
 app.use(express.json());
 app.use("/api/users", userRouter);
+app.use("/api/webUsers", webUserRouter);
 app.use("/api/loads", loadRouter);
 app.use("/api/schedulings", schedulingRouter);
 app.use("/api/pictures", picturesRouter);

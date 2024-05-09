@@ -6,10 +6,11 @@ import {
   updateUser,
   deleteUser,
   logUserIn,
-} from "../database/user/index";
+} from "../../database/user/index";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import secretKey from "../.env/token";
+import secretKey from "../../.env/tokenSecretKey";
+import { sendVerificationEmail } from "../../services/emailValidator";
 
 const userRouter = express.Router();
 // POST-CREATE============================================
@@ -67,7 +68,24 @@ userRouter.post("/login", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+// POST @ EMAIL VALIDATION ================================
+userRouter.post("/email-verification", async (req, res) => {
+  const { Email: email } = req.body;
 
+  if (!email) {
+    return res.status(400).send({ error: "Email is required" });
+  }
+
+  try {
+    const code = await sendVerificationEmail(email);
+    res.status(200).send({ code });
+  } catch (error) {
+    res.status(500).send({ error: "Failed to send verification email" });
+  }
+});
+
+// POST @ SMS VALIDATION ================================
+// ========================================================
 // GET-READ ===============================================
 userRouter.get("/", async (req, res) => {
   console.log("GET CALLED");
