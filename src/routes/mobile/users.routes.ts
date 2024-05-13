@@ -6,11 +6,13 @@ import {
   updateUser,
   deleteUser,
   logUserIn,
+  updatePassword,
 } from "../../database/user/index";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import secretKey from "../../.env/tokenSecretKey";
 import { sendVerificationEmail } from "../../services/emailValidator";
+import { sendVerificationSMS } from "../../services/smsValidator";
 
 const userRouter = express.Router();
 // POST-CREATE============================================
@@ -77,14 +79,31 @@ userRouter.post("/email-verification", async (req, res) => {
   }
 
   try {
-    const code = await sendVerificationEmail(email);
+    //const code = await sendVerificationEmail(email);
+    const code = "123456";
     res.status(200).send({ code });
   } catch (error) {
     res.status(500).send({ error: "Failed to send verification email" });
   }
 });
 
-// POST @ SMS VALIDATION ================================
+// POST @ SMS VALIDATION ==================================
+userRouter.post("/sms-verification", async (req, res) => {
+  const { PhoneNumber: phoneNumber } = req.body;
+  console.log("chamou sms-verification ");
+
+  if (!phoneNumber) {
+    return res.status(400).send({ error: "SMS is required" });
+  }
+
+  try {
+    const code = await sendVerificationSMS(phoneNumber);
+    console.log("code = ", code);
+    res.status(200).send({ code });
+  } catch (error) {
+    res.status(500).send({ error: "Failed to send verification email" });
+  }
+});
 // ========================================================
 // GET-READ ===============================================
 userRouter.get("/", async (req, res) => {
@@ -133,6 +152,37 @@ userRouter.put("/:Index", async (req, res) => {
     res.status(404).send(`User with Index ${req.params.Index} is not valid.`);
   }
 });
+// ========================================================
+userRouter.put("/change-password/:Email", async (req, res) => {
+  console.log("PUT CALLED");
+  const { Email } = req.params;
+  const { NewPassword } = req.body;
+  console.log("Email = ", Email);
+  console.log("NewPassword = ", NewPassword);
+
+  try {
+    // Encrypt new Password
+    const encryptedNewPassword = await bcrypt.hash(NewPassword, saltRounds);
+    console.log("encryptedNewPassword = ", encryptedNewPassword);
+
+    // Change password in database
+    if (Email.length > 0) {
+      console.log("entrou no try, vai chamar updatePassword");
+      const result = await updatePassword(Email, encryptedNewPassword);
+      if (result) {
+        res.send(`User updated successfully!`);
+      } else {
+        res.status(404).send(`User with Email ${Email} not found.`);
+      }
+    } else {
+      res.status(404).send(`User with Email ${Email} is not valid.`);
+    }
+  } catch (error: any) {
+    console.error("Error updating user:", error.message);
+    res.status(500).send("Error updating user");
+  }
+});
+
 // DELETE =================================================
 userRouter.delete("/delete/:Index", async (req, res) => {
   console.log("DELETE CALLED");
