@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { searchPictures } from "../../database/pictures";
+import { getPictures, searchPictures } from "../../database/pictures";
 
 const webPicturesRouter = express.Router();
 webPicturesRouter.use(bodyParser.urlencoded({ limit: "100mb" }));
@@ -10,10 +10,12 @@ webPicturesRouter.get("/get-pictures", async (req, res) => {
   console.log("GET PICTURES CALLED");
   try {
     console.log("chegou no try");
-    const { IDTYPE, ID } = req.query;
+    const { IDTYPE, INDEX } = req.query;
+    console.log("IDTYPE = ", typeof IDTYPE);
+    console.log("INDEX = ", typeof INDEX);
 
-    // Ensure IDTYPE and ID are properly typed and valid
-    if (typeof IDTYPE !== "string" || typeof ID !== "string") {
+    // Ensure IDTYPE and INDEX are properly typed and valid
+    if (typeof IDTYPE !== "string" || typeof INDEX !== "string") {
       return res.status(400).send("Invalid parameters");
     }
 
@@ -21,17 +23,24 @@ webPicturesRouter.get("/get-pictures", async (req, res) => {
       return res.status(400).send("Invalid IDTYPE");
     }
 
-    const indexNumber = parseInt(ID, 10);
+    const indexNumber = parseInt(INDEX, 10);
+    if (isNaN(indexNumber)) {
+      return res.status(400).send("Invalid INDEX");
+    }
     console.log("indexNumber = ", indexNumber);
 
-    const result = await searchPictures(IDTYPE, indexNumber);
+    const result = await getPictures(IDTYPE, indexNumber);
 
-    console.log("typeof result = ", typeof result);
+    console.log("Result: ", result);
 
-    res.status(200).send(result);
+    if (!result) {
+      return res.status(404).send("Picture not found");
+    }
+
+    res.status(200).send({ success: true, data: result });
   } catch (error: any) {
     console.error("Error getting Picture:", error.message);
-    res.status(500).send("Error sending Picture");
+    res.status(500).send({ success: false, message: "Error sending Picture" });
   }
 });
 
