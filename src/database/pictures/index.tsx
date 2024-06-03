@@ -1,3 +1,4 @@
 import { sendPictures } from "./sendPictures";
+import { getPictures } from "./getPictures";
 
-export { sendPictures };
+export { sendPictures, getPictures };
