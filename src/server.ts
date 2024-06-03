@@ -7,12 +7,8 @@ import {
   loadRouter,
   schedulingRouter,
   picturesRouter,
-<<<<<<< Updated upstream
-} from "./routes/index";
-=======
 } from "./routes/mobile/index";
 import { webUserRouter, webPicturesRouter } from "./routes/web/index";
->>>>>>> Stashed changes
 import bodyParser from "body-parser";
 import cors from "cors";
 
@@ -29,11 +25,8 @@ app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
 
 app.use(express.json());
 app.use("/api/users", userRouter);
-<<<<<<< Updated upstream
-=======
 app.use("/api/webUsers", webUserRouter);
 app.use("/api/webPictures", webPicturesRouter);
->>>>>>> Stashed changes
 app.use("/api/loads", loadRouter);
 app.use("/api/schedulings", schedulingRouter);
 app.use("/api/pictures", picturesRouter);

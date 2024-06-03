@@ -7,27 +7,30 @@ interface PictureData {
   DATETIME: string;
 }
 
-export const getPictures = async (
+export const searchPictures = async (
   IDTYPE: "LOADID" | "SCHEDULINGID",
-  INDEX: number
+  IDSEARCHED: number
 ) => {
   try {
-    console.log("Chamou getPictures in Firebase");
+    console.log("Chamou searchPictures in Firebase");
 
     let picturesRef, snapshot;
     if (IDTYPE === "SCHEDULINGID") {
-      picturesRef = admin
-        .database()
-        .ref(`AgroSync/Pictures/schedulings/${INDEX}`);
+      picturesRef = admin.database().ref(`AgroSync/Pictures/schedulings/`);
       snapshot = await picturesRef.once("value");
     } else {
-      picturesRef = admin.database().ref(`AgroSync/Pictures/loads/${INDEX}`);
+      picturesRef = admin.database().ref(`AgroSync/Pictures/loads`);
       snapshot = await picturesRef.once("value");
     }
     const snapshotPictures = snapshot.val() || {};
 
-    console.log("Retrieved Pictures: ", snapshotPictures.lenght);
-    return snapshotPictures;
+    // Filter pictures based on ID
+    const filteredPictures = Object.values(snapshotPictures).filter(
+      (picture: any) => picture.ID === IDSEARCHED
+    );
+
+    console.log("Retrieved Pictures: ", filteredPictures.length);
+    return filteredPictures;
   } catch (error) {
     console.error("Error getting pictures:", error);
     throw error;

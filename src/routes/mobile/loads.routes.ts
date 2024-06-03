@@ -1,5 +1,5 @@
 import express from "express";
-import { searchLoad } from "../database/loads/index";
+import { searchLoad } from "../../database/loads/index";
 
 const loadRouter = express.Router();
 // GET-SEARCH LOAD ============================================

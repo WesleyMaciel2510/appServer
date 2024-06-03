@@ -1,5 +1,5 @@
 import express from "express";
-import { searchScheduling } from "../database/schedulings/index";
+import { searchScheduling } from "../../database/schedulings/index";
 
 const schedulingRouter = express.Router();
 // GET-SEARCH SCHEDULING ============================================
